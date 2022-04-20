@@ -4,7 +4,8 @@ ANIMALS = [
       "name": "Ruby",
       "breed": "Lab",
       "customerId": 2,
-      "locationId": 5
+      "locationId": 5,
+      "status": "Admitted"
     },
     {
       "id": 3,
@@ -18,14 +19,16 @@ ANIMALS = [
       "name": "Kia",
       "breed": "Husky",
       "customerId": 4,
-      "locationId": 2
+      "locationId": 2,
+      "status": "Admitted"
     },
     {
       "id": 5,
       "name": "Savannah",
       "breed": "Dummy",
       "customerId": 5,
-      "locationId": 3
+      "locationId": 3,
+      "status": "Admitted"
     }
   ]
 
@@ -53,3 +56,22 @@ def create_animal(animal):
     ANIMALS.append(animal)
     
     return animal
+
+def delete_animal(id):
+   
+    animal_index = -1
+    
+    for index, animal in enumerate(ANIMALS):
+        if animal["id"] == id:
+         
+            animal_index = index
+
+    if animal_index >= 0:
+        ANIMALS.pop(animal_index)
+        
+def update_animal(id, new_animal):
+
+    for index, animal in enumerate(ANIMALS):
+        if animal["id"] == id:
+            ANIMALS[index] = new_animal
+            break
