@@ -1,43 +1,80 @@
-LOCATIONS = [
-    {
-      "id": 1,
-      "name": "Nashville South",
-      "address": "209 Emory Dr."
-    },
-    {
-      "id": 2,
-      "name": "Nashville North",
-      "address": "420 Jeremy Dr."
-    },
-    {
-      "id": 3,
-      "name": "Nashville East",
-      "address": "73 Tiny St."
-    },
-    {
-      "id": 4,
-      "name": "Nashville West",
-      "address": "9000 Big Way"
-    },
-    {
-      "id": 5,
-      "name": "Nashville Main",
-      "address": "182 Nice Rd."
-    }
-  ]
+import json
+import sqlite3
+from models import Location
+
+# LOCATIONS = [
+#     {
+#       "id": 1,
+#       "name": "Nashville South",
+#       "address": "209 Emory Dr."
+#     },
+#     {
+#       "id": 2,
+#       "name": "Nashville North",
+#       "address": "420 Jeremy Dr."
+#     },
+#     {
+#       "id": 3,
+#       "name": "Nashville East",
+#       "address": "73 Tiny St."
+#     },
+#     {
+#       "id": 4,
+#       "name": "Nashville West",
+#       "address": "9000 Big Way"
+#     },
+#     {
+#       "id": 5,
+#       "name": "Nashville Main",
+#       "address": "182 Nice Rd."
+#     }
+#   ]
 
 def get_all_locations():
-    return LOCATIONS
+  
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT
+            l.id,
+            l.name,
+            l.address
+        FROM Location l
+        """)
+
+        locations = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+
+            location = Location(row['id'], row['name'], row['address'])
+
+            locations.append(location.__dict__)
+
+    return json.dumps(locations)
 
 def get_single_location(id):
-    
-    requested_location = None
-    
-    for location in LOCATIONS:
-        if location["id"] == id:
-            requested_location = location
-    
-    return requested_location
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT
+            l.id,
+            l.name,
+            l.address
+        FROM Location l
+        WHERE l.id = ?
+        """, ( id, ))
+
+        data = db_cursor.fetchone()
+
+        location = Location(data['id'], data['name'], data['address'])
+
+        return json.dumps(location.__dict__)
 
 def create_location(location):
     
